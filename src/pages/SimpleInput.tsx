@@ -7,9 +7,10 @@ import { parseJobDescription, generateParseFeedback, autoCompleteJobInfo } from 
 import type { JobInfo } from '@/types/assessment';
 
 interface SimpleInputProps {
-  onSubmit: (jobInfo: JobInfo, method: 'voice' | 'text') => void;
+  onSubmit: (jobInfo: JobInfo, inputText: string) => void;
   onAdvancedMode: () => void;
   initialJobInfo?: JobInfo | null;
+  initialInputText?: string;
 }
 
 // 示例文案
@@ -20,7 +21,7 @@ const EXAMPLES = [
   '我是B端UI设计师，4年经验，做SaaS产品的界面设计，用Figma和Sketch',
 ];
 
-export function SimpleInput({ onSubmit, onAdvancedMode, initialJobInfo }: SimpleInputProps) {
+export function SimpleInput({ onSubmit, onAdvancedMode, initialJobInfo, initialInputText }: SimpleInputProps) {
   const [inputText, setInputText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -39,7 +40,11 @@ export function SimpleInput({ onSubmit, onAdvancedMode, initialJobInfo }: Simple
 
   // 恢复之前输入的岗位信息
   useEffect(() => {
-    if (initialJobInfo) {
+    if (initialInputText) {
+      // 优先使用保存的原始输入文本（最准确）
+      setInputText(initialInputText);
+    } else if (initialJobInfo) {
+      // fallback：从 JobInfo 拼接恢复
       const parts: string[] = [];
       if (initialJobInfo.jobTitle && initialJobInfo.jobTitle !== '未知岗位') {
         parts.push(`我是${initialJobInfo.jobTitle}`);
@@ -57,7 +62,7 @@ export function SimpleInput({ onSubmit, onAdvancedMode, initialJobInfo }: Simple
         setInputText(parts.join('，'));
       }
     }
-  }, [initialJobInfo]);
+  }, [initialInputText, initialJobInfo]);
   
   // 检测浏览器支持
   const isSpeechSupported = typeof window !== 'undefined' && 
@@ -201,9 +206,7 @@ export function SimpleInput({ onSubmit, onAdvancedMode, initialJobInfo }: Simple
     const parsed = parseJobDescription(inputText);
     const completeInfo = autoCompleteJobInfo(parsed);
     
-    // 判断输入方式：如果最后输入来自语音，标记为voice
-    const method: 'voice' | 'text' = isListening ? 'voice' : 'text';
-    onSubmit(completeInfo, method);
+    onSubmit(completeInfo, inputText);
     setIsProcessing(false);
   };
 
