@@ -14,6 +14,7 @@ function App() {
   const [appState, setAppState] = useState<AppState>('simple');
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
   const [inputMethod, setInputMethod] = useState<InputMethod>('text');
+  const [lastJobInfo, setLastJobInfo] = useState<JobInfo | null>(null);
 
   // 初始化分析
   useEffect(() => {
@@ -26,6 +27,7 @@ function App() {
   }, [appState]);
 
   const handleSimpleSubmit = (jobInfo: JobInfo, method: InputMethod) => {
+    setLastJobInfo(jobInfo);
     const result = performAssessment(jobInfo);
     setAssessmentResult(result);
     setInputMethod(method);
@@ -33,6 +35,7 @@ function App() {
   };
 
   const handleAdvancedSubmit = (jobInfo: JobInfo, method: InputMethod) => {
+    setLastJobInfo(jobInfo);
     const result = performAssessment(jobInfo);
     setAssessmentResult(result);
     setInputMethod(method);
@@ -77,6 +80,7 @@ function App() {
         <SimpleInput 
           onSubmit={(jobInfo) => handleSimpleSubmit(jobInfo, 'text')}
           onAdvancedMode={handleGoToAdvanced}
+          initialJobInfo={lastJobInfo}
         />
       );
     

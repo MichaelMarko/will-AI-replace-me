@@ -9,6 +9,7 @@ import type { JobInfo } from '@/types/assessment';
 interface SimpleInputProps {
   onSubmit: (jobInfo: JobInfo, method: 'voice' | 'text') => void;
   onAdvancedMode: () => void;
+  initialJobInfo?: JobInfo | null;
 }
 
 // 示例文案
@@ -19,7 +20,7 @@ const EXAMPLES = [
   '我是B端UI设计师，4年经验，做SaaS产品的界面设计，用Figma和Sketch',
 ];
 
-export function SimpleInput({ onSubmit, onAdvancedMode }: SimpleInputProps) {
+export function SimpleInput({ onSubmit, onAdvancedMode, initialJobInfo }: SimpleInputProps) {
   const [inputText, setInputText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -35,6 +36,28 @@ export function SimpleInput({ onSubmit, onAdvancedMode }: SimpleInputProps) {
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1'
   );
+
+  // 恢复之前输入的岗位信息
+  useEffect(() => {
+    if (initialJobInfo) {
+      const parts: string[] = [];
+      if (initialJobInfo.jobTitle && initialJobInfo.jobTitle !== '未知岗位') {
+        parts.push(`我是${initialJobInfo.jobTitle}`);
+      }
+      if (initialJobInfo.experience) {
+        parts.push(`${initialJobInfo.experience}年经验`);
+      }
+      if (initialJobInfo.mainResponsibilities?.length) {
+        parts.push(`主要做${initialJobInfo.mainResponsibilities.join('、')}`);
+      }
+      if (initialJobInfo.skills?.length) {
+        parts.push(`擅长${initialJobInfo.skills.join('、')}`);
+      }
+      if (parts.length) {
+        setInputText(parts.join('，'));
+      }
+    }
+  }, [initialJobInfo]);
   
   // 检测浏览器支持
   const isSpeechSupported = typeof window !== 'undefined' && 
