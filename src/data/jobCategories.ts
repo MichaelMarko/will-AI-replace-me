@@ -1711,7 +1711,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'manufacturing',
     name: '制造与工程',
-    icon: 'Factory',
+    icon: '🏭',
     subCategories: [
       {
         id: 'production',
