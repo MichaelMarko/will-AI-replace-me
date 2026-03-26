@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { JOB_CATEGORIES, EXPERIENCE_OPTIONS, SKILL_TAGS, TOOL_TAGS, getJobById } from '@/data/jobCategories';
 import type { JobInfo } from '@/types/assessment';
+import { parseJobDescription, autoCompleteJobInfo } from '@/utils/textParser';
 import * as pdfjs from 'pdfjs-dist';
 
 // 设置 PDF.js worker
@@ -40,7 +41,7 @@ export function AdvancedMode({ onSubmit, onBack }: AdvancedModeProps) {
   // 简历上传状态
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
-  const [parsedResume, setParsedResume] = useState<Partial<JobInfo> | null>(null);
+  const [parsedResume, setParsedResume] = useState<JobInfo | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 获取当前选中的分类数据
@@ -82,9 +83,10 @@ export function AdvancedMode({ onSubmit, onBack }: AdvancedModeProps) {
         fullText += textContent.items.map((item: any) => item.str).join(' ') + ' ';
       }
 
-      // 解析简历文本
-      const parsed = parseResumeText(fullText);
-      setParsedResume(parsed);
+      // 用 textParser 的完整解析引擎解析简历文本
+      const parsed = parseJobDescription(fullText);
+      const completed = autoCompleteJobInfo(parsed);
+      setParsedResume(completed);
     } catch (error) {
       console.error('简历解析错误:', error);
       setUploadError('简历解析失败，请尝试手动填写');
@@ -92,49 +94,6 @@ export function AdvancedMode({ onSubmit, onBack }: AdvancedModeProps) {
       setIsUploading(false);
     }
   }, []);
-
-  // 简单简历文本解析
-  const parseResumeText = (text: string): Partial<JobInfo> => {
-    const result: Partial<JobInfo> = {};
-    
-    // 提取岗位名称（常见的岗位关键词）
-    const jobPatterns = [
-      /(产品经理|工程师|设计师|运营|开发|测试|销售|市场|HR|财务|教师|医生)/,
-      /(Java|Python|前端|后端|算法|UI|UX|数据分析)/,
-    ];
-    
-    for (const pattern of jobPatterns) {
-      const match = text.match(pattern);
-      if (match) {
-        result.jobTitle = match[0];
-        break;
-      }
-    }
-
-    // 提取经验年限
-    const expMatch = text.match(/(\d+)\s*年/);
-    if (expMatch) {
-      const years = parseInt(expMatch[1]);
-      if (years <= 2) result.experience = 'entry';
-      else if (years <= 5) result.experience = 'junior';
-      else if (years <= 10) result.experience = 'mid';
-      else result.experience = 'senior';
-    }
-
-    // 提取技能关键词
-    const skillKeywords = ['Python', 'Java', 'JavaScript', 'SQL', 'Excel', 'PPT', 'Figma', 'Sketch', 'Photoshop', '数据分析'];
-    const skills: string[] = [];
-    for (const skill of skillKeywords) {
-      if (text.includes(skill)) {
-        skills.push(skill);
-      }
-    }
-    if (skills.length > 0) {
-      result.skills = skills;
-    }
-
-    return result;
-  };
 
   // 提交快速选择结果
   const submitQuickSelect = () => {
@@ -159,17 +118,8 @@ export function AdvancedMode({ onSubmit, onBack }: AdvancedModeProps) {
 
   // 提交简历解析结果
   const submitResumeResult = () => {
-    const jobInfo: JobInfo = {
-      jobTitle: parsedResume?.jobTitle || '未知岗位',
-      industry: parsedResume?.industry || 'other',
-      experience: parsedResume?.experience || 'mid',
-      mainResponsibilities: parsedResume?.mainResponsibilities || ['完成日常工作任务'],
-      skills: parsedResume?.skills || ['办公软件'],
-      tools: parsedResume?.tools || ['Office'],
-      education: parsedResume?.education || 'bachelor',
-      salary: parsedResume?.salary || '10-20',
-    };
-    onSubmit(jobInfo, 'resume');
+    if (!parsedResume) return;
+    onSubmit(parsedResume, 'resume');
   };
 
   // 渲染步骤指示器
@@ -501,24 +451,32 @@ export function AdvancedMode({ onSubmit, onBack }: AdvancedModeProps) {
                       解析结果
                     </div>
                     <div className="space-y-2 text-sm">
-                      {parsedResume.jobTitle && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">岗位：</span>
-                          <span className="font-medium">{parsedResume.jobTitle}</span>
-                        </div>
-                      )}
-                      {parsedResume.experience && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">经验：</span>
-                          <span className="font-medium">
-                            {EXPERIENCE_OPTIONS.find(e => e.value === parsedResume.experience)?.label}
-                          </span>
-                        </div>
-                      )}
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">岗位：</span>
+                        <span className="font-medium">{parsedResume.jobTitle}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">行业：</span>
+                        <span className="font-medium">
+                          {parsedResume.industry}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">经验：</span>
+                        <span className="font-medium">
+                          {EXPERIENCE_OPTIONS.find(e => e.value === parsedResume.experience)?.label}
+                        </span>
+                      </div>
                       {parsedResume.skills && parsedResume.skills.length > 0 && (
                         <div className="flex justify-between">
                           <span className="text-gray-600">技能：</span>
-                          <span className="font-medium">{parsedResume.skills.join('、')}</span>
+                          <span className="font-medium">{parsedResume.skills.slice(0, 5).join('、')}</span>
+                        </div>
+                      )}
+                      {parsedResume.tools && parsedResume.tools.length > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">工具：</span>
+                          <span className="font-medium">{parsedResume.tools.slice(0, 5).join('、')}</span>
                         </div>
                       )}
                     </div>

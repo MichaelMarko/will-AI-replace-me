@@ -131,24 +131,30 @@ export function ResultPage({ result, onReset, inputMethod = 'text', onSelectRela
   const generateShareText = () => {
     const riskText = getRiskLevelText(result.comparison.riskLevel);
     const jobTitle = result.jobInfo.jobTitle;
+    const theoScore = result.theoreticalExposure.score;
+    const actScore = result.actualPenetration.score;
     
-    // 根据风险等级生成不同的文案
+    // 根据风险等级和具体分数生成有差异化的文案
     const templates = {
       '高风险': [
-        `😱 我的「${jobTitle}」岗位被AI替代的可能性很高！你也来测测你的岗位危不危险？`,
-        `🚨 警告！我的「${jobTitle}」工作快被AI取代了，赶紧来看看你的！`,
+        `刚测了下，我的「${jobTitle}」被AI替代的可能性高达${theoScore}%… 这结果看得我后背发凉。你也来测测自己的岗位安不安全 👇`,
+        `${theoScore}%… 这是我「${jobTitle}」岗位被AI替代的概率。测完直接沉默了。测测你的 👇`,
+        `说实话没想到——我做「${jobTitle}」，AI替代风险居然这么高。各位同行赶紧测一下自己的 👇`,
       ],
       '存在风险': [
-        `⚠️ 我的「${jobTitle}」岗位有一定被AI替代的风险，你也来测测？`,
-        `🤔 测了一下，我的「${jobTitle}」工作可能会被AI影响，你的呢？`,
+        `测了下我的「${jobTitle}」，AI能替代${theoScore}%的工作内容。说实话有点焦虑了… 你呢？测测看 👇`,
+        `AI已经能干掉我${theoScore}%的活儿了——我是「${jobTitle}」。这速度比我预想的快多了，你测了吗？👇`,
+        `做了个AI岗位风险测评，我的「${jobTitle}」评分不算低… 建议同行都来测一下，做到心里有数 👇`,
       ],
       '需要关注': [
-        `👀 我的「${jobTitle}」岗位需要关注AI发展，快来测测你的！`,
-        `💡 测了一下「${jobTitle}」，AI暂时替代不了我，但得保持警惕！`,
+        `测了下我的「${jobTitle}」，目前还行，但AI的进步速度真的不能小看。先测个底，心里有数 👇`,
+        `作为「${jobTitle}」，我刚才测了个AI替代风险——暂时安全，但窗口期可能没想象中长。建议你也测一下 👇`,
+        `做了个挺专业的AI岗位测评，我的「${jobTitle}」得了一个需要关注的分数。与其焦虑不如先了解 👇`,
       ],
       '安全': [
-        `✅ 我的「${jobTitle}」岗位暂时安全！AI替代不了我，你也来测测？`,
-        `😌 放心了，我的「${jobTitle}」工作AI还替代不了，快看看你的！`,
+        `放心了！测了下我的「${jobTitle}」，AI暂时拿我没辙 😎 但我也不敢掉以轻心。你也来测测 👇`,
+        `我的「${jobTitle}」目前AI替代风险很低，可以松口气。不过谁知道明年呢？先测个基准线放着 👇`,
+        `测完反而安心了——做「${jobTitle}」，AI目前还真替代不了我。但朋友们建议都来测一下，了解趋势不吃亏 👇`,
       ],
     };
     
@@ -164,7 +170,7 @@ export function ResultPage({ result, onReset, inputMethod = 'text', onSelectRela
     
     try {
       await navigator.clipboard.writeText(shareText + ' ' + window.location.href);
-      alert('分享文案已复制！去朋友圈/微信群粘贴吧~');
+      alert('分享文案已复制！去朋友圈或微信群粘贴吧~\n\n💡 小技巧：配一张你的测评截图效果更好哦');
     } catch (err) {
       alert('复制失败，请手动复制');
     }

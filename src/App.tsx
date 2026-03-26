@@ -38,6 +38,7 @@ function App() {
 
   const handleAdvancedSubmit = (jobInfo: JobInfo, method: InputMethod) => {
     setLastJobInfo(jobInfo);
+    setLastInputText(''); // 高级模式/简历上传不保存原始文本
     const result = performAssessment(jobInfo);
     setAssessmentResult(result);
     setInputMethod(method);
