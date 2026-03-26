@@ -10,14 +10,13 @@ import type {
   ExposureFactor,
   PenetrationFactor,
 } from '@/types/assessment';
-import { OCCUPATIONS, getOccupationByTitle, getSimilarOccupations } from '@/data/occupations';
+import { getOccupationByTitle, getSimilarOccupations } from '@/data/occupations';
 import { INDUSTRIES, EXPERIENCE_LEVELS } from '@/types/assessment';
 import { 
   getIndustryCase, 
   getRoleModels, 
   detectRoleType,
-  type IndustryCase,
-  type RoleModel 
+  type RoleModel,
 } from '@/data/industryCases';
 
 // 任务关键词映射到暴露度评分
@@ -45,10 +44,10 @@ const TASK_EXPOSURE_MAP: Record<string, number> = {
   '护理': 25, '治疗': 20, '手术': 15, '诊断': 30,
   '烹饪': 20, '制作': 25, '加工': 30, '生产': 35,
   '驾驶': 25, '操作': 30, '控制': 35, '监控': 40,
-  '清洁': 15, '保洁': 10, '保养': 25, '维护': 35,
-  '建造': 30, '施工': 35, '装修': 25, '维修': 30,
+  '清洁': 15, '保洁': 10,
+  '建造': 30, '施工': 35, '装修': 25,
   '艺术创作': 25, '表演': 20, '演奏': 15, '绘画': 25,
-  '心理咨询': 30, '辅导': 35, '治疗': 20, '干预': 25,
+  '心理咨询': 30, '干预': 25,
   '社交': 20, '陪伴': 15, '照顾': 20, '看护': 18,
 };
 
@@ -98,7 +97,7 @@ const TOOL_EXPOSURE_MAP: Record<string, number> = {
   
   // 专业软件 (中等暴露)
   'SAP': 60, 'Salesforce': 65, 'Jira': 70, 'Confluence': 72,
-  'Slack': 68, 'Teams': 65, 'Zoom': 60, '钉钉': 62,
+  'Slack': 68, 'Teams': 65, 'Zoom': 60,
   
   // 实体工具 (低暴露)
   '机械设备': 30, '实验仪器': 35, '医疗器材': 20, '烹饪设备': 25,
@@ -359,7 +358,7 @@ export function compareExposureAndPenetration(
 export function generateDevelopmentAdvice(
   jobInfo: JobInfo,
   comparison: ComparisonResult,
-  theoretical: TheoreticalExposure
+  _theoretical: TheoreticalExposure
 ): DevelopmentAdvice[] {
   const advice: DevelopmentAdvice[] = [];
   const industryCase = getIndustryCase(jobInfo.industry);
@@ -556,7 +555,7 @@ function generateExposureExplanation(
 function generatePenetrationExplanation(
   score: number,
   level: ActualPenetration['level'],
-  factors: PenetrationFactor[],
+  _factors: PenetrationFactor[],
   jobInfo: JobInfo
 ): string {
   const levelText = {

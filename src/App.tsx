@@ -58,9 +58,11 @@ function App() {
       jobTitle: job.title,
       industry: job.industry,
       experience: '3-5',
-      responsibilities: [],
+      mainResponsibilities: [],
       skills: [],
       tools: [],
+      education: 'bachelor',
+      salary: '10-20',
     };
     const result = performAssessment(jobInfo);
     setAssessmentResult(result);

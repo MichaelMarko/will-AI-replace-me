@@ -1,8 +1,7 @@
 // 一句话解析引擎 - 从自然语言提取岗位信息（增强版）
 
 import type { JobInfo } from '@/types/assessment';
-import { matchJobByKeywords, JOB_CATEGORIES, EXPERIENCE_OPTIONS } from '@/data/jobCategories';
-import { INDUSTRIES } from '@/types/assessment';
+import { JOB_CATEGORIES } from '@/data/jobCategories';
 
 // ============ 职级识别系统 ============
 interface LevelInfo {
@@ -142,31 +141,53 @@ function findBestJobMatch(text: string): JobMatch | null {
       for (const job of subCategory.jobs) {
         let score = 0;
         const jobNameLower = job.name.toLowerCase();
-        
+
         // 1. 直接包含岗位名称（最高权重）
         if (lowerText.includes(jobNameLower)) {
-          score += 10;
+          score += 15;
         }
-        
-        // 2. 包含岗位关键词
+
+        // 2. 包含岗位关键词（精确匹配）
         for (const keyword of job.keywords || []) {
-          if (lowerText.includes(keyword.toLowerCase())) {
-            score += 3;
+          const keywordLower = keyword.toLowerCase();
+          // 完全匹配关键词
+          if (lowerText.includes(keywordLower)) {
+            score += 5;
           }
         }
-        
-        // 3. 包含默认职责关键词
+
+        // 3. 智能模糊匹配：提取文本中的岗位核心词
+        // 例如"HR负责人"应该匹配到"HRD/人力资源总监"
+        const textWords = lowerText.split(/[\s,，.。]+/);
+        for (const word of textWords) {
+          if (word.length >= 2) {
+            // 检查是否包含岗位名称的核心部分（但权重降低）
+            if (jobNameLower.includes(word) || word.includes(jobNameLower.replace(/[\/\s]/g, ''))) {
+              score += 1;
+            }
+          }
+        }
+
+        // 4. 包含默认职责关键词（权重降低）
         for (const resp of job.defaultResponsibilities) {
           if (lowerText.includes(resp.toLowerCase())) {
-            score += 2;
+            score += 1;
           }
         }
-        
-        // 4. 行业匹配加分
+
+        // 5. 行业匹配加分
         if (text.includes(category.name)) {
           score += 2;
         }
-        
+
+        // 6. 负向惩罚：如果包含明显不相关的关键词
+        const negativeKeywords = ['app', 'mobile', '移动端', '小程序'];
+        for (const neg of negativeKeywords) {
+          if (lowerText.includes(neg) && !jobNameLower.includes(neg)) {
+            score -= 3;
+          }
+        }
+
         if (score > highestScore) {
           highestScore = score;
           bestMatch = {
@@ -181,8 +202,8 @@ function findBestJobMatch(text: string): JobMatch | null {
     }
   }
 
-  // 需要最低分数阈值
-  return highestScore >= 3 ? bestMatch : null;
+  // 提高最低分数阈值，减少误识别
+  return highestScore >= 5 ? bestMatch : null;
 }
 
 // 提取职级并调整岗位名称
@@ -251,7 +272,6 @@ export function parseJobDescription(text: string): Partial<JobInfo> {
   }
 
   const result: Partial<JobInfo> = {};
-  const lowerText = text.toLowerCase();
 
   // 1. 智能岗位匹配
   const matchedJob = findBestJobMatch(text);
@@ -430,7 +450,7 @@ export function getMissingFields(parsed: Partial<JobInfo>): string[] {
   return missing;
 }
 
-export function generateParseFeedback(parsed: Partial<JobInfo>, originalText: string): string {
+export function generateParseFeedback(parsed: Partial<JobInfo>, _originalText: string): string {
   const missing = getMissingFields(parsed);
   
   if (missing.length === 0) {
@@ -452,6 +472,8 @@ export function autoCompleteJobInfo(parsed: Partial<JobInfo>): JobInfo {
     mainResponsibilities: parsed.mainResponsibilities || ['完成日常工作任务'],
     skills: parsed.skills || ['办公软件'],
     tools: parsed.tools || ['Office'],
+    education: parsed.education || 'bachelor',
+    salary: parsed.salary || '10-20',
   };
 
   return {

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Mic, MicOff, ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
-import { parseJobDescription, isParseComplete, generateParseFeedback, autoCompleteJobInfo } from '@/utils/textParser';
+import { parseJobDescription, generateParseFeedback, autoCompleteJobInfo } from '@/utils/textParser';
 import type { JobInfo } from '@/types/assessment';
 
 interface SimpleInputProps {
@@ -23,7 +23,7 @@ export function SimpleInput({ onSubmit, onAdvancedMode }: SimpleInputProps) {
   const [inputText, setInputText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [parsedInfo, setParsedInfo] = useState<Partial<JobInfo> | null>(null);
+  const [, setParsedInfo] = useState<Partial<JobInfo> | null>(null);
   const [feedback, setFeedback] = useState('');
   const [speechError, setSpeechError] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -331,7 +331,7 @@ export function SimpleInput({ onSubmit, onAdvancedMode }: SimpleInputProps) {
         {/* 底部说明 */}
         <div className="mt-12 text-center space-y-2 text-sm text-gray-500">
           <p>🔒 本地处理，数据不上传服务器，绝对保密</p>
-          <p>数据来源：Anthropic Economic Index (2024)</p>
+          <p>数据来源：Anthropic Economic Index (2026)</p>
         </div>
       </div>
     </div>

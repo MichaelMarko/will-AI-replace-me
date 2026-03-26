@@ -15,21 +15,18 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock,
-  Download,
   Lightbulb,
-  Mic,
   RefreshCw,
   Share2,
   Shield,
   TrendingDown,
   TrendingUp,
-  User,
   Zap,
   Award,
   BookOpen,
   Target,
 } from 'lucide-react';
-import type { AssessmentResult, DevelopmentAdvice, RoleModel, JobInfo } from '@/types/assessment';
+import type { AssessmentResult } from '@/types/assessment';
 import { INDUSTRIES, EXPERIENCE_LEVELS } from '@/types/assessment';
 import { RelatedJobs } from '@/components/RelatedJobs';
 import { trackAssessment } from '@/utils/analytics';
@@ -556,7 +553,7 @@ export function ResultPage({ result, onReset, inputMethod = 'text', onSelectRela
 
         {/* 页脚 */}
         <div className="text-center text-sm text-gray-500 pt-8">
-          <p>数据来源：Anthropic Economic Index (2024)</p>
+          <p>数据来源：Anthropic Economic Index (2026)</p>
           <p className="mt-1">评估结果仅供参考，请结合实际情况做出职业决策</p>
         </div>
       </div>

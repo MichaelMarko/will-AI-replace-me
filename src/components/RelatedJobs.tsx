@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { TrendingUp, Users, ArrowRight } from 'lucide-react';
 
 interface RelatedJob {
@@ -67,11 +66,11 @@ const RELATED_JOBS_MAP: Record<string, RelatedJob[]> = {
 // 默认推荐
 const DEFAULT_JOBS: RelatedJob[] = [
   { title: '数据分析师', industry: '互联网', reason: '各行业都在需求' },
-  { title: 'AI产品经理', industry: '人工智能', reason: '2024最热门岗位' },
+  { title: 'AI产品经理', industry: '人工智能', reason: '2026最热门岗位' },
   { title: '用户研究员', industry: '互联网', reason: '体验经济核心' },
 ];
 
-export function RelatedJobs({ currentJob, currentIndustry, onSelectJob }: RelatedJobsProps) {
+export function RelatedJobs({ currentJob, onSelectJob }: RelatedJobsProps) {
   const [relatedJobs, setRelatedJobs] = useState<RelatedJob[]>([]);
 
   useEffect(() => {

@@ -69,7 +69,7 @@ export const trackAssessment = async (
   // GA4 事件
   if (window.gtag) {
     window.gtag('event', 'assessment_complete', {
-      job_title: jobInfo.title,
+      job_title: jobInfo.jobTitle,
       industry: jobInfo.industry,
       experience: jobInfo.experience,
       theoretical_score: theoreticalExposure.score,
@@ -84,7 +84,7 @@ export const trackAssessment = async (
   if (supabase) {
     try {
       await supabase.from('assessments').insert({
-        job_title: jobInfo.title,
+        job_title: jobInfo.jobTitle,
         industry: jobInfo.industry,
         experience: jobInfo.experience,
         theoretical_score: theoreticalExposure.score,
@@ -94,7 +94,7 @@ export const trackAssessment = async (
         input_method: inputMethod,
         created_at: new Date().toISOString(),
         // 不存储任何个人身份信息
-      });
+      } as any);
     } catch (e) {
       console.log('数据存储失败（不影响使用）:', e);
     }
@@ -135,10 +135,9 @@ export const getTrends = async () => {
     // 获取高风险岗位TOP5
     const { data: highRiskJobs } = await supabase
       .from('assessments')
-      .select('job_title, avg(theoretical_score)')
+      .select('job_title, theoretical_score')
       .gte('theoretical_score', 70)
-      .group('job_title')
-      .order('avg', { ascending: false })
+      .order('theoretical_score', { ascending: false })
       .limit(5);
     
     return {
