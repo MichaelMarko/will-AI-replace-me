@@ -1,4 +1,4 @@
-// 岗位分级分类体系
+﻿// 岗位分级分类体系
 
 export interface JobCategory {
   id: string;
@@ -27,7 +27,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'tech',
     name: '技术',
-    icon: 'Code',
+    icon: '💻',
     subCategories: [
       {
         id: 'frontend',
@@ -367,7 +367,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'product',
     name: '产品',
-    icon: 'Lightbulb',
+    icon: '💡',
     subCategories: [
       {
         id: 'toc-product',
@@ -524,7 +524,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'design',
     name: '设计',
-    icon: 'Palette',
+    icon: '🎨',
     subCategories: [
       {
         id: 'ui-design',
@@ -705,7 +705,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'operation',
     name: '运营',
-    icon: 'TrendingUp',
+    icon: '📊',
     subCategories: [
       {
         id: 'user-ops',
@@ -844,7 +844,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'marketing',
     name: '市场/销售',
-    icon: 'Megaphone',
+    icon: '📢',
     subCategories: [
       {
         id: 'marketing',
@@ -992,7 +992,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'hr',
     name: '人力资源',
-    icon: 'Users',
+    icon: '👥',
     subCategories: [
       {
         id: 'recruitment',
@@ -1134,7 +1134,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'finance',
     name: '财务/会计',
-    icon: 'Calculator',
+    icon: '💰',
     subCategories: [
       {
         id: 'accounting',
@@ -1243,7 +1243,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'others',
     name: '其他',
-    icon: 'Briefcase',
+    icon: '📁',
     subCategories: [
       {
         id: 'education',
@@ -1328,7 +1328,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'supply-chain',
     name: '采购与供应链',
-    icon: 'Package',
+    icon: '📦',
     subCategories: [
       {
         id: 'procurement',
@@ -1431,7 +1431,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'legal-compliance',
     name: '法务与合规',
-    icon: 'Shield',
+    icon: '⚖️',
     subCategories: [
       {
         id: 'legal',
@@ -1510,7 +1510,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'project-management',
     name: '项目管理',
-    icon: 'ClipboardList',
+    icon: '📋',
     subCategories: [
       {
         id: 'general-pm',
@@ -1571,7 +1571,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'customer-service',
     name: '客户服务',
-    icon: 'Headphones',
+    icon: '🎧',
     subCategories: [
       {
         id: 'general-cs',
@@ -1641,7 +1641,7 @@ export const JOB_CATEGORIES: JobCategory[] = [
   {
     id: 'admin',
     name: '行政管理',
-    icon: 'Building',
+    icon: '🏢',
     subCategories: [
       {
         id: 'general-admin',
