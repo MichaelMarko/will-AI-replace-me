@@ -132,7 +132,6 @@ export function ResultPage({ result, onReset, inputMethod = 'text', onSelectRela
     const riskText = getRiskLevelText(result.comparison.riskLevel);
     const jobTitle = result.jobInfo.jobTitle;
     const theoScore = result.theoreticalExposure.score;
-    const actScore = result.actualPenetration.score;
     
     // 根据风险等级和具体分数生成有差异化的文案
     const templates = {
